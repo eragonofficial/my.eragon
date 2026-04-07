@@ -1,32 +1,182 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Mening birinchi saytim!</title>
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kun Tartibi & Motivatsiya</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+        background: linear-gradient(120deg, #89f7fe, #66a6ff);
+        transition: background 5s ease;
+    }
+    header {
+        background-color: #4f8ef7;
+        color: white;
+        padding: 30px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    header h1 {
+        margin: 0;
+        font-size: 2em;
+    }
+    section {
+        padding: 20px;
+        margin: 20px auto;
+        max-width: 600px;
+        background-color: white;
+        border-radius: 20px;
+        box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        animation: fadeIn 1s ease;
+    }
+    h2 {
+        color: #4f8ef7;
+    }
+    ul {
+        list-style-type: none;
+        padding: 0;
+    }
+    li {
+        padding: 8px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #ddd;
+        transition: background 0.3s;
+        border-radius: 10px;
+    }
+    li.done span {
+        text-decoration: line-through;
+        color: green;
+    }
+    input[type="text"] {
+        padding: 8px;
+        width: 70%;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+    button {
+        padding: 8px 12px;
+        border-radius: 5px;
+        border: none;
+        background-color: #4f8ef7;
+        color: white;
+        cursor: pointer;
+        transition: background 0.3s, transform 0.2s;
+    }
+    button:hover {
+        background-color: #3b6cd1;
+        transform: scale(1.05);
+    }
+    #quote {
+        font-style: italic;
+        font-size: 20px;
+        margin-top: 10px;
+        color: #1a237e;
+        opacity: 0;
+        animation: fadeInQuote 2s forwards;
+    }
+    @keyframes fadeIn {
+        from {opacity:0; transform: translateY(20px);}
+        to {opacity:1; transform: translateY(0);}
+    }
+    @keyframes fadeInQuote {
+        from {opacity:0;}
+        to {opacity:1;}
+    }
+</style>
 </head>
 <body>
-  <header>
-    <h1>Assalomu Aleykum!</h1>
-    <nav>
-      <a href="#">Bosh sahifa</a> |
-      <a href="#">Biz haqimizda</a> |
-      <a href="#">Kontakt</a>
-    </nav>
-  </header>
 
-  <main>
-    <section>
-      <h2>Asosiy ma'lumot</h2>
-      <p>Bu yerda sayt haqida ma'lumot bo‘ladi.</p>
-    </section>
-  </main>
+<header>
+    <h1>Kun Tartibi & Motivatsiya</h1>
+    <p>Bugungi kuningizni samarali boshlang!</p>
+</header>
 
-  <footer>
-    <p>© 2026 Mening Saytim</p>
-  </footer>
+<section>
+    <h2>Kunlik motivatsiyangiz uchun!</h2>
+    <p id="quote"></p>
+</section>
 
-  <script src="script.js"></script>
+<section>
+    <h2>Bugungi vazifalar</h2>
+    <input type="text" id="taskInput" placeholder="Yangi vazifa qo‘shing">
+    <button onclick="addTask()">Qo‘shish</button>
+    <ul id="taskList"></ul>
+</section>
+
+<section>
+    <h2>+998-90-129-25-06</h2>
+    <h2>+998-33-123-25-06</h2>
+    <p>Telegram: @eragonofficial</p>
+    <p>Email: eragonofficial070@email.com</p>
+</section>
+
+<script>
+    // Gradientni sekin o'zgartirish
+    let colors = ["#89f7fe", "#66a6ff", "#fbc2eb", "#a6c1ee", "#ffecd2", "#fcb69f"];
+    let i = 0;
+    setInterval(()=> {
+        document.body.style.background = `linear-gradient(120deg, ${colors[i]}, ${colors[(i+1)%colors.length]})`;
+        i = (i+1)%colors.length;
+    }, 5000);
+
+    // Motivatsion gaplar
+    const quotes = [
+        "Har bir katta safar kichik qadam bilan boshlanadi.",
+        "Bugun qilgan harakatlaring ertangi kuningni belgilaydi.",
+        "Muvaffaqiyat – bu doimiy mehnat va sabr natijasi.",
+        "Xatolardan qo‘rqma, ulardan o‘rgan.",
+        "Har kuni yangi imkoniyatlar bilan boshlanadi.",
+        "O‘zingga ishonsang, hamma mumkin.",
+        "Kichik qadamlar ham katta natija beradi.",
+        "O‘tgan kun bilan solishtirma, bugun yaxshiroq bo‘l."
+    ];
+    function showDailyQuote() {
+        const today = new Date();
+        const dayIndex = today.getDate() % quotes.length;
+        document.getElementById('quote').innerText = quotes[dayIndex];
+    }
+    showDailyQuote();
+
+    // Vazifalar
+    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    function renderTasks() {
+        const taskList = document.getElementById('taskList');
+        taskList.innerHTML = '';
+        tasks.forEach((task, index) => {
+            const li = document.createElement('li');
+            li.className = task.done ? 'done' : '';
+            li.innerHTML = `
+                <span>${task.text}</span>
+                <input type="checkbox" ${task.done ? 'checked' : ''} onchange="toggleTask(${index})">
+                <button onclick="deleteTask(${index})">❌</button>
+            `;
+            taskList.appendChild(li);
+        });
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+    function addTask() {
+        const input = document.getElementById('taskInput');
+        if(input.value.trim() !== '') {
+            tasks.push({ text: input.value, done: false });
+            input.value = '';
+            renderTasks();
+        }
+    }
+    function toggleTask(index) {
+        tasks[index].done = !tasks[index].done;
+        renderTasks();
+    }
+    function deleteTask(index) {
+        tasks.splice(index, 1);
+        renderTasks();
+    }
+    renderTasks();
+</script>
+
 </body>
 </html>
